@@ -1,8 +1,9 @@
-const connection_string = 'mongodb://127.0.0.1:27017/gauth';
+require('dotenv').config();
+let connection_string = `${process.env.DATABASE_URI}`;
 const mongoose = require('mongoose');
-//localhost:27017/gauth
+
 function connectToDb() {
-  mongoose.connect(connection_string);
+  mongoose.connect(process.env.DATABASE_URI);
 
   mongoose.connection.on('connected', () => {
     console.log('Connection to MongoDB successful');

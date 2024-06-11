@@ -27,6 +27,7 @@ const registerUser = async (
     res.status(201).json({
       message: 'Registration successful',
       newUser,
+      auth_token: '1234',
     });
   } catch (error) {
     res.status(500).json({
@@ -60,7 +61,6 @@ const loginUser = async (req, res) => {
     // const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
     //   expiresIn: '1h',
     // });
-
     if (
       user.pattern.length > 0 &&
       user.pattern.toString() !== pattern.toString()
@@ -72,7 +72,8 @@ const loginUser = async (req, res) => {
 
     return res.status(200).json({
       message: 'Login successful',
-      user: user,
+      user,
+      token: '1234',
     });
   } catch (error) {
     res.status(500).json({
@@ -151,12 +152,13 @@ const uploadedImages = async (req, res) => {
 const getUserImagesByEmail = async (req, res) => {
   try {
     const userEmail = req.params.email;
-    const user = await UserImages.find({ user: userEmail });
+    // const user = await UserImages.find({ user: userEmail });
 
+    const user = await User.findOne({ email: userEmail });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.status(200).json(user);
+    res.status(200).json(user.images);
   } catch (error) {
     console.error('Error fetching user images:', error);
     res.status(500).json({ message: 'Something went wrong' });
