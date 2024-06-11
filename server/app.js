@@ -10,14 +10,7 @@ const userRouter = require('./routes/user-auth');
 connectToDb();
 // Body parser middleware
 app.use(express.json());
-app.use(
-  cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-  })
-);
+app.use(cors());
 
 // Routes
 app.use('/', userRouter);
