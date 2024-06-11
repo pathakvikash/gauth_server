@@ -10,7 +10,11 @@ const userRouter = require('./routes/user-auth');
 connectToDb();
 // Body parser middleware
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: 'https://gauth-xi.vercel.app/',
+  })
+);
 
 // Routes
 app.use('/', userRouter);
