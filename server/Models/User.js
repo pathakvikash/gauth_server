@@ -20,7 +20,7 @@ const UserSchema = new Schema({
     type: [Number],
     required: true,
   },
-  images: [{ type: String }],
+  images: [{ type: Object }],
   createdAt: {
     type: Date,
     default: Date.now,

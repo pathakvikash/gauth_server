@@ -15,7 +15,7 @@ const registerUser = async (
     }
     const hashedPassword = await bcrypt.hash(password, salt);
     const userImages = await UserImages.find({ user: email });
-    const imageBase64Array = userImages.map((image) => image.data);
+    const imageBase64Array = userImages.map((image) => image);
     const newUser = await User.create({
       name,
       email,
@@ -98,11 +98,11 @@ const uploadedImages = async (req, res) => {
       req.files.map(async (file) => {
         const imageBuffer = file.buffer;
         const imageBase64 = imageBuffer.toString('base64');
-        const newImage = await UserImages.create({
+        const newImage = {
           user: userEmail,
           data: imageBase64,
-        });
-        return newImage.data;
+        };
+        return newImage;
       })
     );
 
@@ -112,29 +112,6 @@ const uploadedImages = async (req, res) => {
         { $push: { images: { $each: storedImages } } }
       );
     }
-    // await User.updateOne({ email: userEmail });
-
-    // await User.findByIdAndUpdate(user._id, {
-    //   $set: { images: storedImages },
-    // });
-    // for (let i = 0; i < req.files.length; i++) {
-    //   const imageBuffer = req.files[i].buffer;
-    //   const imageBase64 = imageBuffer.toString('base64');
-
-    //   // image document
-    //   const newImage = new UserImages({ data: imageBase64 });
-
-    //   const savedImage = await newImage.save();
-
-    //   storedImages.push(savedImage);
-    // }
-    // const newUser = new User({
-    //   email: userEmail,
-    //   images: storedImages,
-    // });
-    // await newUser.save();
-
-    // console.log(storedImages);
 
     return res.status(200).json({
       message: 'Images uploaded successfully',
@@ -152,7 +129,6 @@ const uploadedImages = async (req, res) => {
 const getUserImagesByEmail = async (req, res) => {
   try {
     const userEmail = req.params.email;
-    // const user = await UserImages.find({ user: userEmail });
 
     const user = await User.findOne({ email: userEmail });
     if (!user) {
@@ -188,10 +164,30 @@ const getRemovedImages = async (req, res) => {
     });
   }
 };
+
+const removeAllImages = async (req, res) => {
+  try {
+    const user = await User.findOne({
+      email: req.params.email,
+    });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    user.images = [];
+    await user.save();
+    res.status(200).json({ data: user });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Something went wrong',
+      error: error.message,
+    });
+  }
+};
 module.exports = {
   registerUser,
   loginUser,
   uploadedImages,
   getUserImagesByEmail,
   getRemovedImages,
+  removeAllImages,
 };

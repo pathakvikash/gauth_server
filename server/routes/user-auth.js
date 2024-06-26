@@ -15,5 +15,6 @@ router.post(
 );
 router.get('/get-user-images/:email', userController.getUserImagesByEmail);
 router.get('/user/remove-images/:email', userController.getRemovedImages);
+router.get('/user/remove-all-images/:email', userController.removeAllImages);
 
 module.exports = router;
